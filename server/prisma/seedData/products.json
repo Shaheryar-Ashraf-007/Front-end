@@ -1,9 +1,5 @@
 [
   {
-    "productId": "some-uuid-1",
-    "name": "Product A",
-    "price": 0,
-    "rating": 0,
-    "stockQuantity": 0
+   
   }
 ]
