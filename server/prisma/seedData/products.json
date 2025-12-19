@@ -1,5 +1,7 @@
-[
-  {
-   
-  }
-]
+[{
+  "productId": "some-uuid-1",
+  "name": "",
+  "price": 0,
+  "rating": 0.0,
+  "stockQuantity": 0
+}]

@@ -1,8 +1,4 @@
 
-
-
-
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -15,7 +11,7 @@ datasource db {
 model Users {
   userId          String  @id @default(uuid())
   name            String
-  email           String  @unique
+  producttype     String @default("Retail")
   phoneNumber     String?
   unitCost        Int    @default(0) 
   quantity        Int     @default(0) 
@@ -28,7 +24,6 @@ model Users {
 model Salaries {
   userId          String   @id @default(uuid())
   name            String
-  email           String   @unique
   phoneNumber     String?  
   salaryAmount    Float    @default(0.0) 
   paidAmount      Float    @default(0.0) 
@@ -45,9 +40,14 @@ model Products {
   name          String
   price         Float
   rating        Float?
+  description   String?
+  model         String?
+  color         String?
+  category      String?
+  imageUrl      String?
   stockQuantity Int
-  Sales         Sale[]
-  Purchases     Purchase[]
+  Sales         Sale[]  
+  Purchases     Purchase[] 
 }
 
 model Sale {
@@ -57,7 +57,7 @@ model Sale {
   quantity    Int
   unitPrice   Float
   totalAmount Float
-  product     Products @relation(fields: [productId], references: [productId])
+  product     Products @relation(fields: [productId], references: [productId], onDelete: Cascade)
 }
 
 model Purchase {
@@ -68,7 +68,7 @@ model Purchase {
   unitCost     Float
   totalCost    Float
   totalAmount  Float
-  product      Products @relation(fields: [productId], references: [productId])
+  product      Products @relation(fields: [productId], references: [productId], onDelete: Cascade)
 }
 model Expenses {
   expenseId String   @id @default(uuid())

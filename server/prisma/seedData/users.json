@@ -1,6 +1,13 @@
-[
-  {
-    
-  }
-
+[{
+  "userId": "some-uuid",  
+  "name": "John Doe",
+  "producttype": "Electronics",
+  "phoneNumber": "+1234567890",
+  "unitCost": 29,
+  "quantity": 100,
+  "totalAmount": 2999.99,
+  "paidAmount": 1500.00,
+  "remainingAmount": 1499.99,
+  "timestamp": "2025-04-21T12:00:00.000Z"
+}
 ]

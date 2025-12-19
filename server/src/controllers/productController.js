@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
+
+
 const prisma = new PrismaClient();
 
 export const getProducts = async (req, res) => {
@@ -21,44 +23,55 @@ export const getProducts = async (req, res) => {
 
 export const createProduct = async (req, res) => {
   try {
-    const { productId, name, price, rating, stockQuantity } = req.body;
+    const {
+      name,
+      price,
+      rating,
+      stockQuantity,
+      description,
+      model,
+      color,
+      category,
+      imageUrl
+    } = req.body;
+
+    // Validate required fields
+    if (!name || !price || !stockQuantity) {
+      return res.status(400).json({ 
+        message: "Name, price, and stock quantity are required" 
+      });
+    }
+
     const product = await prisma.products.create({
       data: {
-        productId,
         name,
-        price,
-        rating,
-        stockQuantity,
+        price: parseFloat(price),
+        rating: rating ? parseFloat(rating) : null,
+        stockQuantity: parseInt(stockQuantity),
+        description: description || null,
+        imageUrl: imageUrl || null,
+        model: model || null,
+        color: color || null,
+        category: category || 'Uncategorized'
       },
     });
+
     res.status(201).json(product);
   } catch (error) {
     console.error("Error creating product:", error);
-    res.status(500).json({ message: "Error creating product" });
+    res.status(500).json({ message: error.message });
   }
 };
-
 export const deleteProduct = async (req, res) => {
-  const { productId } = req.params; // Extract ID from request parameters
-  console.log("Deleting product with ID:", productId); // Log the ID
+  const { productId } = req.params;
 
-  // Check if ID is valid
   if (!productId) {
     return res.status(400).json({ message: "Product ID is required" });
   }
 
   try {
-    // Check for related sales or records
-    const relatedSales = await prisma.sale.findMany({
-      where: { productId: productId }
-    });
-
-    if (relatedSales.length > 0) {
-      return res.status(400).json({ message: "Cannot delete product. It has related sales." });
-    }
-
     const deletedProduct = await prisma.products.delete({
-      where: { productId: productId }, // Ensure this matches your database schema
+      where: { productId },
     });
     res.status(200).json(deletedProduct);
   } catch (error) {

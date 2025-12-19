@@ -32,7 +32,7 @@ export const createUsers = async (req, res) => {
   try {
     const {
       name,
-      email,
+      producttype,
       phoneNumber,
       paidAmount,
       unitCost,
@@ -45,8 +45,8 @@ export const createUsers = async (req, res) => {
     console.log("Received data:", req.body);
 
     // Validate required fields
-    if (!name || !email || !paidAmount) {
-      return res.status(400).json({ message: "Name, email, and paid amount are required" });
+    if (!name || !producttype) {
+      return res.status(400).json({ message: "Name, producttype, and paid amount are required" });
     }
 
     const calculatedTotalAmount = parseFloat(unitCost) * parseFloat(quantity);
@@ -56,7 +56,7 @@ export const createUsers = async (req, res) => {
     const newUser = await prisma.users.create({
       data: {
         name,
-        email,
+        producttype,
         phoneNumber,
         paidAmount: parseFloat(paidAmount || 0),
         unitCost: parseFloat(unitCost),

@@ -8,12 +8,21 @@ import { createSalaries, deleteSalaries, getSalaries } from './controllers/salar
 import { createUsers, deleteUsers, getUsers } from './controllers/userController.js';
 import { createExpense, deleteExpense, getExpensesByCategory } from './controllers/expenseController.js';
 import { getDashboardMetrics } from './controllers/dashboardController.js';
+import bodyParser from 'body-parser';
+
 
 
 dotenv.config();
 
 const app = express();
 const port = Number(process.env.PORT)||80;
+
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
+// OR if you're using express.json() directly:
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 app.listen(port, "0.0.0.0",() => {
   console.log(`Server running on http://localhost:${port}`);
