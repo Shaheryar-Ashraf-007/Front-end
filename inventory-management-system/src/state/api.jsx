@@ -32,10 +32,11 @@ export const api = createApi({
 
     // Create new product
     createProducts: build.mutation({
-      query: (newProduct) => ({
-        url: "/products",
+      query: (formData) => ({
+        url: "products",
         method: "POST",
-        body: newProduct,
+        body: formData,
+        formData: true,
       }),
       invalidatesTags: ["Products"],
     }),

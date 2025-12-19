@@ -86,7 +86,6 @@ const Salaries = () => {
     { field: "serial", headerName: "S.No", width: 70, sortable: false },
     { field: "userId", headerName: "ID", width: 220, sortable: true },
     { field: "name", headerName: "Employee Name", width: 200, sortable: true },
-    { field: "email", headerName: "Email", width: 220, sortable: true },
     { field: "salaryAmount", headerName: "Salary Amount", width: 150, sortable: true },
     { field: "paidAmount", headerName: "Paid Amount", width: 150, sortable: true },
     { field: "remainingAmount", headerName: "Remaining Amount", width: 180, sortable: true },
@@ -112,13 +111,13 @@ const Salaries = () => {
 
   const handleCreateSalaries = async (salariesData) => {
     try {
-      const { name, email, phoneNumber, salaryAmount, paidAmount, petrolExpense, otherExpense } = salariesData;
+      const { name, phoneNumber, salaryAmount, paidAmount, petrolExpense, otherExpense } = salariesData;
 
       const formattedStartDate = new Date(salariesData.startDate).toISOString();
       const formattedEndDate = new Date(salariesData.endDate).toISOString();
 
-      if (!name || !email || !salaryAmount) {
-        throw new Error("Name, email, and salary amount are required");
+      if (!name || !salaryAmount) {
+        throw new Error("Name, and salary amount are required");
       }
 
       const totalDeductions = (Number(paidAmount) || 0) + (Number(petrolExpense) || 0) + (Number(otherExpense) || 0);
@@ -126,7 +125,6 @@ const Salaries = () => {
 
       const result = await createSalaries({
         name,
-        email,
         phoneNumber,
         salaryAmount: Number(salaryAmount),
         paidAmount: Number(paidAmount),
@@ -189,7 +187,6 @@ const Salaries = () => {
       serial: index + 1,
       userId: salary.userId || 'N/A',
       name: salary.name || 'N/A',
-      email: salary.email != null ? salary.email : "N/A",
       salaryAmount: salary.salaryAmount != null ? salary.salaryAmount : "N/A",
       paidAmount: salary.paidAmount != null ? salary.paidAmount : "N/A",
       remainingAmount: salary.remainingAmount != null ? salary.remainingAmount : "N/A",

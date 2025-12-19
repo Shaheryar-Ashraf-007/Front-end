@@ -21,7 +21,7 @@ const Users = () => {
     { field: "serial", headerName: "S.No", width: 70, sortable: false },
     { field: "userId", headerName: "ID", width: 220, sortable: true },
     { field: "name", headerName: "Customer Name", width: 200, sortable: true },
-    { field: "email", headerName: "Email", width: 220, sortable: true },
+    { field: "producttype", headerName: "Product Type", width: 220, sortable: true },
     { field: "phoneNumber", headerName: "Phone Number", width: 150, sortable: true },
     { field: "unitCost", headerName: "Unit Cost", width: 150, sortable: true },
     { field: "quantity", headerName: "Quantity", width: 180, sortable: true },
@@ -50,7 +50,7 @@ const Users = () => {
       serial: index + 1,
       userId: user.userId || 'N/A',
       name: user.name || 'N/A',
-      email: user.email ?? "N/A",
+      producttype: user.producttype?? "N/A",
       phoneNumber: user.phoneNumber ?? "N/A",
       unitCost: user.unitCost ?? "N/A",
       quantity: user.quantity ?? 'N/A',
@@ -145,14 +145,14 @@ const Users = () => {
 
   const handleCreateUsers = async (userData) => {
     try {
-      const { name, email, phoneNumber, paidAmount, quantity, unitCost } = userData;
+      const { name, producttype, phoneNumber, paidAmount, quantity, unitCost } = userData;
 
       // Calculate total amount
       const totalAmount = quantity * unitCost;
 
       const result = await createUsers({
         name,
-        email,
+        producttype,
         phoneNumber,
         quantity: Number(quantity),
         unitCost: Number(unitCost),

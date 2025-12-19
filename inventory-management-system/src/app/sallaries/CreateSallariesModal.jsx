@@ -8,7 +8,6 @@ const CreateSalariesModal = ({ isOpen, onClose, onCreate }) => {
   const [formData, setFormData] = useState({
     userId: v4(),
     name: "",
-    email: "",
     phoneNumber: "",
     salaryAmount: 0,
     paidAmount: 0,
@@ -53,20 +52,6 @@ const CreateSalariesModal = ({ isOpen, onClose, onCreate }) => {
             placeholder="Name"
             onChange={handleChange}
             value={formData.name}
-            className="block w-full mb-2 p-2 border-gray-500 border-2 rounded-md"
-            required
-          />
-
-          {/* Email */}
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Email
-          </label>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            onChange={handleChange}
-            value={formData.email}
             className="block w-full mb-2 p-2 border-gray-500 border-2 rounded-md"
             required
           />

@@ -8,31 +8,50 @@ const CreateUsersModal = ({ isOpen, onClose, onCreate }) => {
   const [userData, setUserData] = useState({
     userId: v4(),
     name: "",
-    email: "",
+    producttype: "",
     phoneNumber: "",
     unitCost: 0,
     paidAmount: 0,
     quantity: 0,
     remainingAmount: 0,
     totalAmount: 0,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 
+  // Reset form when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setUserData({
+        userId: v4(),
+        name: "",
+        producttype: "",
+        phoneNumber: "",
+        unitCost: 0,
+        paidAmount: 0,
+        quantity: 0,
+        remainingAmount: 0,
+        totalAmount: 0,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }, [isOpen]);
+
+  // Auto-calculate total and remaining
   useEffect(() => {
     const total = userData.unitCost * userData.quantity;
     const remaining = total - userData.paidAmount;
-    setUserData(prevData => ({
+    setUserData((prevData) => ({
       ...prevData,
       totalAmount: total,
-      remainingAmount: remaining
+      remainingAmount: remaining,
     }));
   }, [userData.unitCost, userData.quantity, userData.paidAmount]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUserData(prevData => ({
+    setUserData((prevData) => ({
       ...prevData,
-      [name]: name === "quantity" || name === "paidAmount" || name === "unitCost" 
+      [name]: ["quantity", "paidAmount", "unitCost"].includes(name)
         ? parseFloat(value) || 0
         : value,
     }));
@@ -65,16 +84,16 @@ const CreateUsersModal = ({ isOpen, onClose, onCreate }) => {
             required
           />
 
-          {/* Email */}
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Email
+          {/* Product Type */}
+          <label htmlFor="producttype" className="block text-sm font-medium text-gray-700">
+            Product Type
           </label>
           <input
-            type="email"
-            name="email"
-            placeholder="Email"
+            type="text"
+            name="producttype"
+            placeholder="Product Type"
             onChange={handleChange}
-            value={userData.email}
+            value={userData.producttype}
             className="block w-full mb-2 p-2 border-gray-500 border-2 rounded-md"
             required
           />
@@ -84,7 +103,7 @@ const CreateUsersModal = ({ isOpen, onClose, onCreate }) => {
             Phone Number
           </label>
           <input
-            type="text"
+            type="tel"
             name="phoneNumber"
             placeholder="Phone Number"
             onChange={handleChange}
@@ -121,7 +140,7 @@ const CreateUsersModal = ({ isOpen, onClose, onCreate }) => {
             required
           />
 
-          {/* Total Amount */}
+          {/* Total Amount (Read-only) */}
           <label htmlFor="totalAmount" className="block text-sm font-medium text-gray-700">
             Total Amount
           </label>
@@ -129,7 +148,7 @@ const CreateUsersModal = ({ isOpen, onClose, onCreate }) => {
             type="number"
             name="totalAmount"
             value={userData.totalAmount}
-            className="block w-full mb-2 p-2 border-gray-500 border-2 rounded-md"
+            className="block w-full mb-2 p-2 border-gray-500 border-2 rounded-md bg-gray-100"
             readOnly
           />
 
@@ -147,7 +166,7 @@ const CreateUsersModal = ({ isOpen, onClose, onCreate }) => {
             required
           />
 
-          {/* Remaining Amount */}
+          {/* Remaining Amount (Read-only) */}
           <label htmlFor="remainingAmount" className="block text-sm font-medium text-gray-700">
             Remaining Amount
           </label>
@@ -155,11 +174,11 @@ const CreateUsersModal = ({ isOpen, onClose, onCreate }) => {
             type="number"
             name="remainingAmount"
             value={userData.remainingAmount}
-            className="block w-full mb-2 p-2 border-gray-500 border-2 rounded-md"
+            className="block w-full mb-2 p-2 border-gray-500 border-2 rounded-md bg-gray-100"
             readOnly
           />
 
-          {/* Action Buttons */}
+          {/* Buttons */}
           <div className="flex justify-end mt-4">
             <button
               type="submit"
