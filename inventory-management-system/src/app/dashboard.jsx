@@ -1,25 +1,35 @@
 "use client";
 
 import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "./[components]/Navbar";
 import Sidebar from "./[components]/Sidebar";
-import StoreProvider from "./redux";
-import { useAppSelector } from "./redux";
+import StoreProvider, { useAppSelector } from "./redux";
+
 const DashboardLayout = ({ children }) => {
+  const router = useRouter();
   const isSidebarCollapsed = useAppSelector(
     (state) => state.global.isSidebarCollapsed
   );
   const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
 
+  // Check login status
+  useEffect(() => {
+    const token = localStorage.getItem("token"); // or check document.cookie
+    if (!token) {
+      router.push("/login"); // redirect if not logged in
+    }
+  }, [router]);
+
   useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add("dark");
-      document.documentElement.classList.remove("light"); 
+      document.documentElement.classList.remove("light");
     } else {
       document.documentElement.classList.add("light");
-      document.documentElement.classList.remove("dark"); 
+      document.documentElement.classList.remove("dark");
     }
-  }, [isDarkMode]); 
+  }, [isDarkMode]);
 
   return (
     <div

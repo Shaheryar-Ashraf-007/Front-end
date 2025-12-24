@@ -8,13 +8,15 @@ import Rating from "../[components]/Ratings/index.jsx";
 const CardPopularProducts = () => {
   const { data: dashboardMetrics, isLoading } = useGetDashboardMetricsQuery();
 
-  // Function to get a random image from the imported images
+  // Function to get a random image
   const getRandomImage = () => {
     if (Array.isArray(images) && images.length > 0) {
       return images[Math.floor(Math.random() * images.length)];
     }
-    return "/product1.jpeg"; 
+    return "/product1.jpeg"; // fallback image
   };
+
+  if (isLoading) return <p>Loading...</p>;
 
   return (
     <div className="row-span-3 xl:row-span-6 bg-white shadow-md rounded-2xl pb-16">
