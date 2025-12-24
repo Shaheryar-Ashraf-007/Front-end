@@ -9,6 +9,16 @@ datasource db {
 }
 
 model Users {
+  userId    String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Customers {
   userId          String  @id @default(uuid())
   name            String
   producttype     String @default("Retail")

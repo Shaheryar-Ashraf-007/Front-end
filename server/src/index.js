@@ -9,46 +9,51 @@ import { createUsers, deleteUsers, getUsers } from './controllers/userController
 import { createExpense, deleteExpense, getExpensesByCategory } from './controllers/expenseController.js';
 import { getDashboardMetrics } from './controllers/dashboardController.js';
 import bodyParser from 'body-parser';
-
-
+import { loginController } from './controllers/loginController.js';
+import { middleware } from "../src/middleware/middleware.js";
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
 const app = express();
-const port = Number(process.env.PORT)||80;
+const port = Number(process.env.PORT) || 8000;
 
+// Body parsers
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-
-// OR if you're using express.json() directly:
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-app.listen(port, "0.0.0.0",() => {
-  console.log(`Server running on http://localhost:${port}`);
-});
-
-app.use(cors());
+// Middleware
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true
+}));
 app.use(helmet());
 app.use(morgan('dev'));
-app.use(express.json());
+app.use(cookieParser());
 
-app.get('/dashboard', getDashboardMetrics); //http://localhost:8000/dashboard
-app.get('/products',getProducts);  //http://localhost:8000/products
-app.post('/products',createProduct);
+// Routes
+app.post('/login', loginController); // <-- Remove middleware here
+
+app.get('/dashboard', middleware, getDashboardMetrics); // Protected route
+app.get('/products', getProducts);
+app.post('/products', createProduct);
 app.delete('/products/:productId', deleteProduct);
-app.get('/salaries', getSalaries); 
+app.get('/salaries', getSalaries);
 app.post('/salaries', createSalaries);
 app.delete('/salaries/:userId', deleteSalaries);
-app.get('/expenses',getExpensesByCategory);
+app.get('/expenses', getExpensesByCategory);
 app.post('/expenses', createExpense);
 app.delete('/expenses/:expenseId', deleteExpense);
-app.get('/users',getUsers);
-app.post('/users', createUsers); 
-app.delete('/users/:userId', deleteUsers)
-; 
+app.get('/users', getUsers);
+app.post('/users', createUsers);
+app.delete('/users/:userId', deleteUsers);
 
 app.get('/', (req, res) => {
   res.send('Inventory Management System API');
 });
 
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Server running on http://localhost:${port}`);
+});

@@ -1,8 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
-// Reuse PrismaClient instance across the application
 const prisma = new PrismaClient({
-  log: ['query', 'info', 'warn', 'error'], // Enable detailed logging for debugging
+  log: ['query', 'info', 'warn', 'error'],
 });
 
 // Get Users
@@ -15,7 +14,7 @@ export const getUsers = async (req, res) => {
       where: {
         name: {
           contains: search,
-          mode: 'insensitive', // Optional: case insensitive search
+          mode: 'insensitive', 
         },
       },
     });
