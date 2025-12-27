@@ -32,6 +32,7 @@ export const createProduct = async (req, res) => {
       model,
       color,
       category,
+      isVerified,
       imageUrl
     } = req.body;
 
@@ -52,6 +53,7 @@ export const createProduct = async (req, res) => {
         imageUrl: imageUrl || null,
         model: model || null,
         color: color || null,
+        isVerified: isVerified || false,
         category: category || 'Uncategorized'
       },
     });

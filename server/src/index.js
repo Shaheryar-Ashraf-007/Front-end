@@ -12,6 +12,7 @@ import bodyParser from 'body-parser';
 import { loginController } from './controllers/loginController.js';
 import { middleware } from "../src/middleware/middleware.js";
 import cookieParser from 'cookie-parser';
+import { toggleProductVerification } from './controllers/verifyController.js';
 
 dotenv.config();
 
@@ -37,18 +38,19 @@ app.use(cookieParser());
 app.post('/login', loginController); // <-- Remove middleware here
 
 app.get('/dashboard', middleware, getDashboardMetrics); // Protected route
-app.get('/products', getProducts);
-app.post('/products', createProduct);
-app.delete('/products/:productId', deleteProduct);
-app.get('/salaries', getSalaries);
-app.post('/salaries', createSalaries);
-app.delete('/salaries/:userId', deleteSalaries);
-app.get('/expenses', getExpensesByCategory);
-app.post('/expenses', createExpense);
-app.delete('/expenses/:expenseId', deleteExpense);
-app.get('/users', getUsers);
-app.post('/users', createUsers);
-app.delete('/users/:userId', deleteUsers);
+app.get('/products',middleware, getProducts);
+app.post('/products',middleware, createProduct);
+app.put('/verify-imei', middleware, toggleProductVerification);
+app.delete('/products/:productId', middleware,deleteProduct);
+app.get('/salaries',middleware, getSalaries);
+app.post('/salaries',middleware, createSalaries);
+app.delete('/salaries/:userId',middleware, deleteSalaries);
+app.get('/expenses',middleware, getExpensesByCategory);
+app.post('/expenses',middleware, createExpense);
+app.delete('/expenses/:expenseId',middleware, deleteExpense);
+app.get('/users',middleware, getUsers);
+app.post('/users',middleware, createUsers);
+app.delete('/users/:userId',middleware, deleteUsers);
 
 app.get('/', (req, res) => {
   res.send('Inventory Management System API');

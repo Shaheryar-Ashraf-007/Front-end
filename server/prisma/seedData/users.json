@@ -1,6 +1,8 @@
 [{
   "userId": "some-uuid",  
   "name": "John Doe",
+  "email":"john@gmail.com",
+  "password":"1234567",
   "producttype": "Electronics",
   "phoneNumber": "+1234567890",
   "unitCost": 29,

@@ -55,6 +55,7 @@ model Products {
   color         String?
   category      String?
   imageUrl      String?
+  isVerified    Boolean  @default(false)
   stockQuantity Int
   Sales         Sale[]  
   Purchases     Purchase[] 

@@ -25,7 +25,7 @@ export const loginController = async (req, res) => {
     const token = jwt.sign(
       { email }, 
       process.env.JWT_SECRET, 
-      { expiresIn: "7d" }
+      { expiresIn: "15m" }
     );
 
     // 4. Send token as cookie + response
@@ -33,7 +33,7 @@ export const loginController = async (req, res) => {
       httpOnly: true,
       secure: false, // set true if using HTTPS
       sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 15 * 60 * 1000, 
     });
 
     return res.status(200).json({ message: "Login successful", token });
