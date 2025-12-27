@@ -220,6 +220,26 @@ const DataGridComponent = ({ products, onImageClick }) => {
         </div>
       ),
     },
+
+    {
+  field: "isVerified",
+  headerName: "Verification",
+  width: 160,
+  headerAlign: "center",
+  align: "center",
+  renderCell: (params) => (
+    params.value ? (
+      <span className="px-3 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded-full">
+        Verified by PTA
+      </span>
+    ) : (
+      <span className="px-3 py-1 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
+        Non-Verified
+      </span>
+    )
+  ),
+},
+
     { 
       field: "price", 
       headerName: "Price", 
@@ -366,21 +386,35 @@ const InventorySummary = ({ products }) => {
   return (
     <div className="mt-8 space-y-6">
       {/* Total Inventory Card */}
-      <div className="bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl shadow-xl p-8 text-white">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <TrendingUp className="w-8 h-8" />
-              <h2 className="text-2xl font-bold">Total Inventory Value</h2>
-            </div>
-            <p className="text-purple-100 text-sm">Current worth of all products in stock</p>
-          </div>
-          <div className="text-right">
-            <div className="text-5xl font-bold">Rs {totalAmount.toFixed(2)}</div>
-            <div className="text-purple-100 text-sm mt-2">{products.length} Products</div>
-          </div>
-        </div>
+      <div className="bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl shadow-xl p-5 sm:p-6 lg:p-8 text-white">
+  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+    
+    {/* Left Content */}
+    <div className="w-full sm:w-auto text-center sm:text-left">
+      <div className="flex items-center justify-center sm:justify-start gap-3 mb-2">
+        <TrendingUp className="w-7 h-7 sm:w-8 sm:h-8" />
+        <h2 className="text-lg sm:text-2xl font-bold">
+          Total Inventory Value
+        </h2>
       </div>
+      <p className="text-purple-100 text-xs sm:text-sm">
+        Current worth of all products in stock
+      </p>
+    </div>
+
+    {/* Right Content */}
+    <div className="w-full sm:w-auto text-center sm:text-right">
+      <div className="text-3xl sm:text-4xl lg:text-5xl font-bold">
+        Rs {totalAmount.toFixed(2)}
+      </div>
+      <div className="text-purple-100 text-xs sm:text-sm mt-2">
+        {products.length} Products
+      </div>
+    </div>
+
+  </div>
+</div>
+
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Product-wise Summary */}
@@ -504,6 +538,7 @@ const Inventory = () => {
       image: product.imageUrl || product.image || null,
       model: product.model || null,
       color: product.color || null,
+      isVerified: Boolean(product.isverified ?? product.isVerified),
       description: product.description || null,
       price: product.price != null ? product.price : 'N/A',
       rating: product.rating != null ? product.rating : 'N/A',

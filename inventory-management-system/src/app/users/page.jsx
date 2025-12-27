@@ -1,56 +1,30 @@
 "use client";
 
 import React, { useState, useMemo } from 'react';
-import { useGetUsersQuery,useCreateUsersMutation,useDeleteUsersMutation } from '@/state/api.jsx';
-import Header from "@/app/[components]/Header";
-import CreateUsersModal from './CreateUsersModal.jsx';
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import { ErrorBoundary } from 'react-error-boundary';
-import Button from '@mui/material/Button';
-import * as XLSX from 'xlsx';
+import { User, Plus, Download, Trash2, TrendingUp, DollarSign, Package, CreditCard } from 'lucide-react';
+import CreateUsersModal from './CreateUsersModal';
+
+// Mock data for demonstration
+const mockUsers = [
+  { userId: '1', name: 'Ahmed Khan', producttype: 'Electronics', phoneNumber: '+92-300-1234567', unitCost: 1500, quantity: 5, paidAmount: 5000, totalAmount: 7500, remainingAmount: 2500, timestamp: new Date('2024-12-15').toISOString() },
+  { userId: '2', name: 'Fatima Ali', producttype: 'Clothing', phoneNumber: '+92-301-7654321', unitCost: 800, quantity: 10, paidAmount: 6000, totalAmount: 8000, remainingAmount: 2000, timestamp: new Date('2024-12-20').toISOString() },
+  { userId: '3', name: 'Hassan Shah', producttype: 'Furniture', phoneNumber: '+92-302-9876543', unitCost: 3000, quantity: 3, paidAmount: 7000, totalAmount: 9000, remainingAmount: 2000, timestamp: new Date('2024-11-10').toISOString() },
+  { userId: '4', name: 'Ayesha Malik', producttype: 'Electronics', phoneNumber: '+92-303-1112233', unitCost: 2000, quantity: 4, paidAmount: 8000, totalAmount: 8000, remainingAmount: 0, timestamp: new Date('2024-12-22').toISOString() },
+  { userId: '5', name: 'Ahmed Khan', producttype: 'Accessories', phoneNumber: '+92-300-1234567', unitCost: 500, quantity: 8, paidAmount: 2000, totalAmount: 4000, remainingAmount: 2000, timestamp: new Date('2024-11-25').toISOString() },
+];
 
 const Users = () => {
-  const { data: rawUsers, isError, isLoading, error, refetch } = useGetUsersQuery();
-  const [createUsers] = useCreateUsersMutation();
-  const [deleteUsers] = useDeleteUsersMutation();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [pageSize, setPageSize] = useState(10);
-
-  const columns = useMemo(() => [
-    { field: "serial", headerName: "S.No", width: 70, sortable: false },
-    { field: "userId", headerName: "ID", width: 220, sortable: true },
-    { field: "name", headerName: "Customer Name", width: 200, sortable: true },
-    { field: "producttype", headerName: "Product Type", width: 220, sortable: true },
-    { field: "phoneNumber", headerName: "Phone Number", width: 150, sortable: true },
-    { field: "unitCost", headerName: "Unit Cost", width: 150, sortable: true },
-    { field: "quantity", headerName: "Quantity", width: 180, sortable: true },
-    { field: "paidAmount", headerName: "Paid Amount", width: 150, sortable: true },
-    { field: "remainingAmount", headerName: "Remaining Amount", width: 180, sortable: true },
-    { field: "timestamp", headerName: "Date/Time", width: 180, sortable: true },
-    { field: "totalAmount", headerName: "Total Amount", width: 180, sortable: true },
-    {
-      field: "actions",
-      headerName: "Actions",
-      width: 150,
-      renderCell: (params) => (
-        <button 
-          className='text-blue-500'
-          onClick={() => handleDeleteUsers(params.row.userId)}
-        >
-          Delete
-        </button>
-      ),
-    },
-  ] , []);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [usersList, setUsersList] = useState(mockUsers);
 
   const users = useMemo(() => {
-    if (!rawUsers) return [];
-    return rawUsers.map((user, index) => ({
+    if (!usersList) return [];
+    return usersList.map((user, index) => ({
       serial: index + 1,
       userId: user.userId || 'N/A',
       name: user.name || 'N/A',
-      producttype: user.producttype?? "N/A",
+      producttype: user.producttype ?? "N/A",
       phoneNumber: user.phoneNumber ?? "N/A",
       unitCost: user.unitCost ?? "N/A",
       quantity: user.quantity ?? 'N/A',
@@ -59,21 +33,25 @@ const Users = () => {
       totalAmount: user.totalAmount ?? "N/A",
       timestamp: user.timestamp ? new Date(user.timestamp).toLocaleString() : 'N/A',
     }));
-  }, [rawUsers]);
+  }, [usersList]);
 
-  // Calculate overall summary totals
+  const filteredUsers = useMemo(() => {
+    return users.filter(user => 
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.producttype.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.phoneNumber.includes(searchTerm)
+    );
+  }, [users, searchTerm]);
+
   const summaryData = useMemo(() => {
     if (!users?.length) return null;
-
-    return users.reduce((acc, user) => {
-      return {
-        totalQuantity: acc.totalQuantity + (Number(user.quantity) || 0),
-        totalPaidAmount: acc.totalPaidAmount + (Number(user.paidAmount) || 0),
-        totalRemainingAmount: acc.totalRemainingAmount + (Number(user.remainingAmount) || 0),
-        grandTotal: acc.grandTotal + (Number(user.totalAmount) || 0),
-        totalUsers: acc.totalUsers + 1 // Count total users
-      };
-    }, {
+    return users.reduce((acc, user) => ({
+      totalQuantity: acc.totalQuantity + (Number(user.quantity) || 0),
+      totalPaidAmount: acc.totalPaidAmount + (Number(user.paidAmount) || 0),
+      totalRemainingAmount: acc.totalRemainingAmount + (Number(user.remainingAmount) || 0),
+      grandTotal: acc.grandTotal + (Number(user.totalAmount) || 0),
+      totalUsers: acc.totalUsers + 1
+    }), {
       totalQuantity: 0,
       totalPaidAmount: 0,
       totalRemainingAmount: 0,
@@ -82,10 +60,8 @@ const Users = () => {
     });
   }, [users]);
 
-  // Calculate name-wise summary
   const nameWiseSummary = useMemo(() => {
     if (!users?.length) return [];
-
     const summaryByName = users.reduce((acc, user) => {
       const name = user.name;
       if (!acc[name]) {
@@ -96,288 +72,246 @@ const Users = () => {
           transactions: 0
         };
       }
-
       acc[name].totalPaidAmount += Number(user.paidAmount) || 0;
       acc[name].totalRemainingAmount += Number(user.remainingAmount) || 0;
       acc[name].totalAmount += Number(user.totalAmount) || 0;
       acc[name].transactions += 1;
-
       return acc;
     }, {});
 
     return Object.entries(summaryByName)
-      .map(([name, data]) => ({
-        name,
-        ...data
-      }))
-      .sort((a, b) => b.totalAmount - a.totalAmount); // Sort by total amount descending
+      .map(([name, data]) => ({ name, ...data }))
+      .sort((a, b) => b.totalAmount - a.totalAmount);
   }, [users]);
 
-  // Calculate monthly summary
-  const monthlySummary = useMemo(() => {
-    if (!users?.length) return [];
+  const handleCreateUser = (userData) => {
+    const totalAmount = Number(userData.quantity) * Number(userData.unitCost);
+    const remainingAmount = totalAmount - Number(userData.paidAmount);
+    
+    const newUser = {
+      userId: String(usersList.length + 1),
+      name: userData.name,
+      producttype: userData.producttype,
+      phoneNumber: userData.phoneNumber,
+      unitCost: Number(userData.unitCost),
+      quantity: Number(userData.quantity),
+      paidAmount: Number(userData.paidAmount),
+      totalAmount: totalAmount,
+      remainingAmount: remainingAmount,
+      timestamp: new Date().toISOString()
+    };
 
-    const summaryByMonth = users.reduce((acc, user) => {
-      const month = new Date(user.timestamp).toLocaleString('default', { month: 'long', year: 'numeric' });
-      if (!acc[month]) {
-        acc[month] = {};
-      }
-      if (!acc[month][user.name]) {
-        acc[month][user.name] = {
-          totalPaidAmount: 0,
-          totalRemainingAmount: 0,
-          totalAmount: 0,
-        };
-      }
-
-      acc[month][user.name].totalPaidAmount += Number(user.paidAmount) || 0;
-      acc[month][user.name].totalRemainingAmount += Number(user.remainingAmount) || 0;
-      acc[month][user.name].totalAmount += Number(user.totalAmount) || 0;
-
-      return acc;
-    }, {});
-
-    return Object.entries(summaryByMonth).map(([month, users]) => ({
-      month,
-      users: Object.entries(users).map(([name, data]) => ({ name, ...data }))
-    }));
-  }, [users]);
-
-  const handleCreateUsers = async (userData) => {
-    try {
-      const { name, producttype, phoneNumber, paidAmount, quantity, unitCost } = userData;
-
-      // Calculate total amount
-      const totalAmount = quantity * unitCost;
-
-      const result = await createUsers({
-        name,
-        producttype,
-        phoneNumber,
-        quantity: Number(quantity),
-        unitCost: Number(unitCost),
-        paidAmount: Number(paidAmount),
-        totalAmount: Number(totalAmount),
-        remainingAmount: Number(totalAmount - paidAmount),
-        timestamp: new Date().toISOString(),
-      }).unwrap();
-
-      console.log("User created successfully:", result);
-      setIsModalOpen(false);
-      setErrorMessage("");
-      refetch();
-    } catch (error) {
-      console.error("Detailed error:", error);
-      setErrorMessage(error.data?.message || error.message || "An error occurred while creating the user");
-    }
+    setUsersList([...usersList, newUser]);
+    setIsModalOpen(false);
   };
 
-  const handleDeleteUsers = async (userId) => {
-    if (!userId) {
-      console.error("No userId provided for deletion");
-      setErrorMessage("Cannot delete user: Invalid user ID");
-      return;
-    }
-
-    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
-    if (!confirmDelete) return;
-
-    try {
-      await deleteUsers(userId).unwrap();
-      console.log(`Successfully deleted user: ${userId}`);
-      setErrorMessage("");
-      refetch();
-    } catch (error) {
-      console.error("Failed to delete user:", error);
-      setErrorMessage(error.data?.message || error.message || "An error occurred while deleting the user");
+  const handleDeleteUser = (userId) => {
+    if (window.confirm('Are you sure you want to delete this customer?')) {
+      setUsersList(usersList.filter(user => user.userId !== userId));
     }
   };
 
   const exportToExcel = () => {
-    const ws = XLSX.utils.json_to_sheet(users);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Users");
-    XLSX.writeFile(wb, "Users.xlsx");
+    alert('Export functionality would trigger here');
   };
 
-  if (isLoading) return <div className="py-4 text-center">Loading...</div>;
-  if (isError) return <div className="text-center text-red-500 py-4">Error: {error.message}</div>;
-
   return (
-    <div className="flex flex-col p-4">
-      <Header name="Users" />
-      <div className="flex justify-between mb-4">
-        <Button variant="contained" color="primary" onClick={() => setIsModalOpen(true)}>
-          Create User
-        </Button>
-        <button
-          className="flex items-center bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
-          onClick={exportToExcel}
-        >
-          Export to Excel
-        </button>
-      </div>
-      {errorMessage && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {errorMessage}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg">
+              <User className="w-8 h-8 text-white" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800">Customer Management</h1>
+              <p className="text-gray-500 text-sm">Track and manage your customer transactions</p>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <button
+              onClick={exportToExcel}
+              className="flex items-center gap-2 px-4 py-2.5 bg-white text-green-600 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 border border-green-100"
+            >
+              <Download className="w-4 h-4" />
+              <span className="font-medium">Export</span>
+            </button>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
+            >
+              <Plus className="w-4 h-4" />
+              <span className="font-medium">Add Customer</span>
+            </button>
+          </div>
         </div>
-      )}
-      <ErrorBoundary FallbackComponent={({ error }) => <div>Error: {error.message}</div>}>
-        <div style={{ height: 400, width: '100%' }}>
-          <DataGrid
-            rows={users}
-            columns={columns}
-            getRowId={(row) => row.userId}
-            className="bg-white shadow rounded-lg border border-gray-200 mt-5 !text-gray-700"
-            pagination
-            pageSize={pageSize}
-            onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-            rowsPerPageOptions={[5, 10, 20]}
-            disableSelectionOnClick
-            components={{
-              Toolbar: GridToolbar,
-            }}
+
+        {/* Summary Cards */}
+        {summaryData && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-blue-100 group hover:-translate-y-1">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-500 mb-1">Total Customers</p>
+                  <p className="text-3xl font-bold text-gray-800">{summaryData.totalUsers}</p>
+                </div>
+                <div className="p-3 bg-blue-50 rounded-xl group-hover:bg-blue-100 transition-colors">
+                  <User className="w-6 h-6 text-blue-600" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-green-100 group hover:-translate-y-1">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-500 mb-1">Total Paid</p>
+                  <p className="text-3xl font-bold text-green-600">₨{summaryData.totalPaidAmount.toLocaleString()}</p>
+                </div>
+                <div className="p-3 bg-green-50 rounded-xl group-hover:bg-green-100 transition-colors">
+                  <DollarSign className="w-6 h-6 text-green-600" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-orange-100 group hover:-translate-y-1">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-500 mb-1">Total Remaining</p>
+                  <p className="text-3xl font-bold text-orange-600">₨{summaryData.totalRemainingAmount.toLocaleString()}</p>
+                </div>
+                <div className="p-3 bg-orange-50 rounded-xl group-hover:bg-orange-100 transition-colors">
+                  <CreditCard className="w-6 h-6 text-orange-600" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 group hover:-translate-y-1">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-indigo-100 mb-1">Grand Total</p>
+                  <p className="text-3xl font-bold text-white">₨{summaryData.grandTotal.toLocaleString()}</p>
+                </div>
+                <div className="p-3 bg-white/20 rounded-xl group-hover:bg-white/30 transition-colors">
+                  <TrendingUp className="w-6 h-6 text-white" />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Search Bar */}
+        <div className="bg-white rounded-2xl p-4 shadow-md">
+          <input
+            type="text"
+            placeholder="Search by name, product, or phone number..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
           />
         </div>
 
-        {/* Overall Summary Section */}
-        {summaryData && (
-          <div className="mt-8 bg-white shadow rounded-lg p-6 border border-gray-200">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Overall Summary</h2>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600">Total Customers</p>
-                <p className="text-lg font-semibold text-gray-800">{summaryData.totalUsers}</p>
-              </div>
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600">Total Quantity</p>
-                <p className="text-lg font-semibold text-gray-800">{summaryData.totalQuantity}</p>
-              </div>
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600">Total Paid Amount</p>
-                <p className="text-lg font-semibold text-green-600">Rs {summaryData.totalPaidAmount.toFixed(2)}</p>
-              </div>
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600">Total Remaining Amount</p>
-                <p className="text-lg font-semibold text-orange-600">Rs {summaryData.totalRemainingAmount.toFixed(2)}</p>
-              </div>
-              <div className="p-4 bg-blue-50 rounded-lg">
-                <p className="text-sm text-blue-600">Grand Total</p>
-                <p className="text-xl font-bold text-blue-600">Rs {summaryData.grandTotal.toFixed(2)}</p>
-              </div>
-            </div>
+        {/* Customer Table */}
+        <div className="bg-white rounded-2xl shadow-md overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
+                <tr>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Customer</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Product</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Phone</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Qty</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Paid</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Remaining</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Total</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {filteredUsers.map((user) => (
+                  <tr key={user.userId} className="hover:bg-blue-50/50 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full flex items-center justify-center text-white font-semibold">
+                          {user.name.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="font-medium text-gray-800">{user.name}</p>
+                          <p className="text-xs text-gray-500">{user.timestamp}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="px-3 py-1 bg-purple-50 text-purple-700 rounded-lg text-sm font-medium">
+                        {user.producttype}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-600">{user.phoneNumber}</td>
+                    <td className="px-6 py-4">
+                      <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-sm font-semibold">
+                        {user.quantity}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm font-semibold text-green-600">₨{Number(user.paidAmount).toLocaleString()}</td>
+                    <td className="px-6 py-4 text-sm font-semibold text-orange-600">₨{Number(user.remainingAmount).toLocaleString()}</td>
+                    <td className="px-6 py-4 text-sm font-bold text-indigo-600">₨{Number(user.totalAmount).toLocaleString()}</td>
+                    <td className="px-6 py-4">
+                      <button 
+                        onClick={() => handleDeleteUser(user.userId)}
+                        className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        )}
+        </div>
 
-        {/* Name-wise Summary Section */}
+        {/* Name-wise Summary */}
         {nameWiseSummary.length > 0 && (
-          <div className="mt-8 bg-white shadow rounded-lg p-6 border border-gray-200">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Name-wise Summary</h2>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Transactions
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Total Paid
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Total Remaining
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Total Amount
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {nameWiseSummary.map((summary, index) => (
-                    <tr key={summary.name} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {summary.name}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {summary.transactions}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">
-                        Rs {summary.totalPaidAmount.toFixed(2)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-orange-600 font-medium">
-                        Rs {summary.totalRemainingAmount.toFixed(2)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 font-semibold">
-                        Rs {summary.totalAmount.toFixed(2)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <div className="bg-white rounded-2xl shadow-md p-6">
+            <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+              <Package className="w-5 h-5 text-indigo-600" />
+              Customer Summary
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {nameWiseSummary.map((summary) => (
+                <div key={summary.name} className="p-5 bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl border border-blue-100 hover:shadow-md transition-all">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-semibold text-gray-800">{summary.name}</h3>
+                    <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">
+                      {summary.transactions} orders
+                    </span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Paid:</span>
+                      <span className="font-semibold text-green-600">₨{summary.totalPaidAmount.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Remaining:</span>
+                      <span className="font-semibold text-orange-600">₨{summary.totalRemainingAmount.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between text-sm pt-2 border-t border-gray-200">
+                      <span className="font-medium text-gray-700">Total:</span>
+                      <span className="font-bold text-indigo-600">₨{summary.totalAmount.toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
+      </div>
 
-        {/* Monthly Summary Section */}
-        {monthlySummary.length > 0 && (
-          <div className="mt-8 bg-white shadow rounded-lg p-6 border border-gray-200">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Monthly Summary</h2>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Month
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Total Paid
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Total Remaining
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Total Amount
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {monthlySummary.map(({ month, users }) => (
-                    users.map((userSummary) => (
-                      <tr key={`${month}-${userSummary.name}`} className="bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {month}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {userSummary.name}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">
-                          Rs {userSummary.totalPaidAmount.toFixed(2)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-orange-600 font-medium">
-                          Rs {userSummary.totalRemainingAmount.toFixed(2)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 font-semibold">
-                          Rs {userSummary.totalAmount.toFixed(2)}
-                        </td>
-                      </tr>
-                    ))
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-      </ErrorBoundary>
+      {/* Modal */}
       <CreateUsersModal 
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)} 
-        onCreate={handleCreateUsers} 
+        onClose={() => setIsModalOpen(false)}
+        onCreate={handleCreateUser}
       />
     </div>
   );

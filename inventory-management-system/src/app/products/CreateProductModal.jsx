@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import { Box, Typography, Fade, IconButton, Divider } from "@mui/material";
+import { Box, Typography, Fade, IconButton, Divider, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { Launch } from "@mui/icons-material";
 
 const CreatePurchaseModal = ({ isOpen, onClose, onCreate }) => {
   const [name, setName] = useState("");
@@ -17,6 +18,8 @@ const CreatePurchaseModal = ({ isOpen, onClose, onCreate }) => {
   const [rating, setRating] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+    const [isVerified, setIsVerified] = useState(false); // NEW STATE
+
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -96,6 +99,8 @@ const CreatePurchaseModal = ({ isOpen, onClose, onCreate }) => {
       rating: rating ? parseFloat(rating) : undefined,
       category: category || undefined,
       imageUrl,
+      isVerified, 
+
     };
 
     onCreate(productData);
@@ -111,6 +116,8 @@ const CreatePurchaseModal = ({ isOpen, onClose, onCreate }) => {
     setCategory("");
     setImageFile(null);
     setImagePreview(null);
+    setIsVerified(false); 
+
     onClose();
   };
 
@@ -195,6 +202,124 @@ const CreatePurchaseModal = ({ isOpen, onClose, onCreate }) => {
             >
               Product Details
             </Typography>
+
+            <FormControl fullWidth margin="normal">
+              <InputLabel id="verified-label">Verification Status</InputLabel>
+              <Select
+                labelId="verified-label"
+                value={isVerified}
+                label="Verification Status"
+                onChange={(e) => setIsVerified(e.target.value)}
+              >
+                <MenuItem value={true}>Verified</MenuItem>
+                <MenuItem value={false}>Non-Verified</MenuItem>
+              </Select>
+            </FormControl>
+
+            <Box sx={{ mt: 1, mb: 3 }}>
+  <Button
+    fullWidth
+    variant="outlined"
+    startIcon={<Launch />}
+    onClick={() => window.open("https://dirbs.pta.gov.pk/", "_blank")}
+    sx={{
+      py: 1.3,
+      borderRadius: 2,
+      textTransform: "none",
+      fontWeight: 600,
+      borderColor: "#0f766e",
+      color: "#0f766e",
+      "&:hover": {
+        borderColor: "#115e59",
+        bgcolor: "rgba(15, 118, 110, 0.05)",
+      },
+    }}
+  >
+    Check IMEI on PTA (DIRBS)
+  </Button>
+
+  <Typography
+    variant="caption"
+    sx={{
+      display: "block",
+      mt: 1,
+      color: "text.secondary",
+      textAlign: "center",
+    }}
+  >
+    Open PTA website, verify IMEI manually, then select status above
+  </Typography>
+</Box>
+
+
+
+             <Typography
+              variant="subtitle2"
+              sx={{
+                color: "text.secondary",
+                fontWeight: 600,
+                mb: 2,
+                textTransform: "uppercase",
+                fontSize: "0.75rem",
+                letterSpacing: "0.5px",
+              }}
+            >
+              Product Image
+            </Typography>
+
+            <Button
+              variant="outlined"
+              component="label"
+              fullWidth
+              startIcon={<CloudUploadIcon />}
+              sx={{
+                py: 1.5,
+                borderRadius: 2,
+                borderStyle: "dashed",
+                borderWidth: 2,
+                borderColor: imageFile ? "#667eea" : "divider",
+                color: imageFile ? "#667eea" : "text.secondary",
+                bgcolor: imageFile ? "rgba(102, 126, 234, 0.05)" : "transparent",
+                "&:hover": {
+                  borderColor: "#667eea",
+                  bgcolor: "rgba(102, 126, 234, 0.05)",
+                },
+              }}
+            >
+              {imageFile ? "Change Image" : "Upload Image"}
+              <input
+                type="file"
+                hidden
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+            </Button>
+
+            {imagePreview && (
+              <Box
+                sx={{
+                  mt: 2,
+                  p: 2,
+                  border: "1px solid",
+                  borderColor: "divider",
+                  borderRadius: 2,
+                  bgcolor: "grey.50",
+                }}
+              >
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  style={{
+                    width: "100%",
+                    maxHeight: 200,
+                    objectFit: "contain",
+                    borderRadius: 8,
+                  }}
+                />
+              </Box>
+            )}
+
+            <Divider sx={{ my: 3 }} />
 
             <TextField
               label="Product Name"
@@ -298,73 +423,7 @@ const CreatePurchaseModal = ({ isOpen, onClose, onCreate }) => {
             <Divider sx={{ my: 3 }} />
 
             {/* Image Upload Section */}
-            <Typography
-              variant="subtitle2"
-              sx={{
-                color: "text.secondary",
-                fontWeight: 600,
-                mb: 2,
-                textTransform: "uppercase",
-                fontSize: "0.75rem",
-                letterSpacing: "0.5px",
-              }}
-            >
-              Product Image
-            </Typography>
-
-            <Button
-              variant="outlined"
-              component="label"
-              fullWidth
-              startIcon={<CloudUploadIcon />}
-              sx={{
-                py: 1.5,
-                borderRadius: 2,
-                borderStyle: "dashed",
-                borderWidth: 2,
-                borderColor: imageFile ? "#667eea" : "divider",
-                color: imageFile ? "#667eea" : "text.secondary",
-                bgcolor: imageFile ? "rgba(102, 126, 234, 0.05)" : "transparent",
-                "&:hover": {
-                  borderColor: "#667eea",
-                  bgcolor: "rgba(102, 126, 234, 0.05)",
-                },
-              }}
-            >
-              {imageFile ? "Change Image" : "Upload Image"}
-              <input
-                type="file"
-                hidden
-                accept="image/*"
-                onChange={handleImageChange}
-              />
-            </Button>
-
-            {imagePreview && (
-              <Box
-                sx={{
-                  mt: 2,
-                  p: 2,
-                  border: "1px solid",
-                  borderColor: "divider",
-                  borderRadius: 2,
-                  bgcolor: "grey.50",
-                }}
-              >
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  style={{
-                    width: "100%",
-                    maxHeight: 200,
-                    objectFit: "contain",
-                    borderRadius: 8,
-                  }}
-                />
-              </Box>
-            )}
-
-            <Divider sx={{ my: 3 }} />
+           
 
             {/* Optional Information Section */}
             <Typography

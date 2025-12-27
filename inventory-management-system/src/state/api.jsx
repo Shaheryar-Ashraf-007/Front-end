@@ -54,6 +54,15 @@ export const api = createApi({
       invalidatesTags: ["Products"],
     }),
 
+    verifyProduct: build.mutation({
+  query: ({ productId, isVerified }) => ({
+    url: "/products/verify",
+    method: "PUT",
+    body: { productId, isVerified },
+  }),
+  invalidatesTags: ["Products"],
+}),
+
     /* ================= USERS ================= */
     getUsers: build.query({
       query: (search) => ({ url: "/users", params: search ? { search } : {} }),
@@ -103,6 +112,7 @@ export const {
   useLoginMutation,
   useGetDashboardMetricsQuery,
   useGetProductsQuery,
+  useVerifyProductMutation,
   useCreateProductsMutation,
   useDeleteProductMutation,
   useGetUsersQuery,

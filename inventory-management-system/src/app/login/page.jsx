@@ -1,5 +1,5 @@
-"use client";
 
+"use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
@@ -42,11 +42,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 px-4">
+    <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-white/20 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-white/30">
         <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-white">Welcome Back</h1>
-          <p className="text-white/80 text-sm mt-1">Login to continue</p>
+          <h1 className="text-3xl font-bold">Welcome Back</h1>
+          <p className="text-sm mt-1">Login to continue</p>
         </div>
 
         {error && <p className="text-red-200 text-sm text-center mb-4">{error}</p>}
@@ -54,9 +54,9 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Email */}
           <div>
-            <label className="text-white text-sm mb-1 block">Email</label>
+            <label className=" text-sm mb-1 block ">Email</label>
             <div className="relative">
-              <Mail className="absolute left-3 top-3.5 text-white/70" size={18} />
+              <Mail className="absolute left-3 top-3.5 text-gray-400 " size={18} />
               <input
                 type="email"
                 name="email"
@@ -64,16 +64,16 @@ export default function LoginPage() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="you@example.com"
-                className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-black focus:outline-none focus:ring-2 focus:ring-white"
               />
             </div>
           </div>
 
           {/* Password */}
           <div>
-            <label className="text-white text-sm mb-1 block">Password</label>
+            <label className=" text-sm mb-1 block">Password</label>
             <div className="relative">
-              <Lock className="absolute left-3 top-3.5 text-white/70" size={18} />
+              <Lock className="absolute left-3 top-3.5 text-gray-400 " size={18} />
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
@@ -81,12 +81,12 @@ export default function LoginPage() {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-10 py-3 rounded-xl bg-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white"
+                className="w-full pl-10 pr-10 py-3 rounded-xl border border-black focus:outline-none focus:ring-2 focus:ring-white"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-3.5 text-white/70 hover:text-white"
+                className="absolute right-3 top-3.5 "
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -97,7 +97,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 rounded-xl bg-white text-indigo-600 font-semibold hover:bg-gray-100 transition disabled:opacity-70"
+            className="w-full py-3 rounded-xl bg-blue-600 text-white hover:text-black font-semibold hover:bg-gray-100 transition disabled:opacity-70"
           >
             {isLoading ? "Logging in..." : "Login"}
           </button>

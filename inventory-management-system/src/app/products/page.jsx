@@ -192,12 +192,15 @@ const Products = () => {
                 className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 transform hover:-translate-y-1"
               >
                 <div className="p-6">
+
+
                   {/* Product Header */}
                   <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
+                        <div className="flex-1">
                       <h3 className="text-lg font-bold text-gray-900 mb-1 line-clamp-2">
                         {product.name}
                       </h3>
+                     
                       <div className="flex items-center gap-2 text-sm text-gray-500">
                         {product.model && (
                           <span className="px-2 py-1 bg-purple-50 text-purple-700 rounded-lg font-medium">
@@ -209,6 +212,18 @@ const Products = () => {
                             {product.color}
                           </span>
                         )}
+
+                        <div className="ml-28">
+                    {product.isVerified ? (
+                      <span className="px-2 py-2 text-xs font-semibold text-green-800 bg-green-100 rounded-full">
+                        Verified by PTA
+                      </span>
+                    ) : (
+                      <span className="px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">
+                        Non-Verified
+                      </span>
+                    )}
+                  </div>
                       </div>
                     </div>
                   </div>
