@@ -66,44 +66,39 @@ export const createSalaries = async (req, res) => {
   }
 };
 
-// DELETE: Remove a salary record by userId
-export const deleteSalaries = async (req, res) => {
+export const updateSalary = async (req, res) => {
   const { userId } = req.params;
 
-  if (!userId) {
-    return res.status(400).json({ message: "User ID is required" });
-  }
-
   try {
-    const existingSalary = await prisma.salaries.findUnique({
+    const {
+      name,
+      phoneNumber,
+      salaryAmount,
+      paidAmount,
+      remainingAmount,
+      startDate,
+      endDate,
+      petrolExpense,
+      otherExpense
+    } = req.body;
+
+    const updated = await prisma.salaries.update({
       where: { userId },
+      data: {
+        name,
+        phoneNumber,
+        salaryAmount: salaryAmount !== undefined ? parseFloat(salaryAmount) : undefined,
+        paidAmount: paidAmount !== undefined ? parseFloat(paidAmount) : undefined,
+        remainingAmount: remainingAmount !== undefined ? parseFloat(remainingAmount) : undefined,
+        startDate,
+        endDate,
+        petrolExpense: petrolExpense !== undefined ? parseInt(petrolExpense) : undefined,
+        otherExpense,
+      },
     });
 
-    if (!existingSalary) {
-      return res.status(404).json({ message: `Salary with ID ${userId} not found` });
-    }
-
-    const deletedSalary = await prisma.salaries.delete({
-      where: { userId },
-    });
-
-    res.status(200).json({
-      message: "Salary deleted successfully",
-      data: deletedSalary,
-    });
+    res.json(updated);
   } catch (error) {
-    console.error("Error deleting salary:", error);
-
-    if (error.code === 'P2025') {
-      return res.status(404).json({
-        message: "Record to delete does not exist",
-        error: error.message,
-      });
-    }
-
-    res.status(500).json({
-      message: "Failed to delete salary",
-      error: error.message,
-    });
+    res.status(500).json({ message: error.message });
   }
 };

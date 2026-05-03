@@ -72,3 +72,23 @@ export const deleteExpense = async (req, res) => {
       res.status(500).json({ message: "Failed to delete expense" });
   }
 };
+
+export const updateExpense = async (req, res) => {
+  const { expenseId } = req.params;
+
+  try {
+    const { category, amount } = req.body;
+
+    const updated = await prisma.expenses.update({
+      where: { expenseId },
+      data: {
+        category,
+        amount: amount !== undefined ? parseFloat(amount) : undefined,
+      },
+    });
+
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

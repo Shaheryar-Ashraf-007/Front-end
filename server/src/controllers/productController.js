@@ -81,3 +81,48 @@ export const deleteProduct = async (req, res) => {
     res.status(500).json({ message: error?.message || "Failed to delete product" });
   }
 };
+
+
+export const updateProduct = async (req, res) => {
+  const { productId } = req.params;
+
+  if (!productId) {
+    return res.status(400).json({ message: "Product ID is required" });
+  }
+
+  try {
+    const {
+      name,
+      price,
+      rating,
+      stockQuantity,
+      description,
+      model,
+      color,
+      category,
+      isVerified,
+      imageUrl
+    } = req.body;
+
+    const updatedProduct = await prisma.products.update({
+      where: { productId },
+      data: {
+        ...(name && { name }),
+        ...(price && { price: parseFloat(price) }),
+        ...(rating && { rating: parseFloat(rating) }),
+        ...(stockQuantity && { stockQuantity: parseInt(stockQuantity) }),
+        ...(description !== undefined && { description }),
+        ...(model !== undefined && { model }),
+        ...(color !== undefined && { color }),
+        ...(category && { category }),
+        ...(imageUrl !== undefined && { imageUrl }),
+        ...(isVerified !== undefined && { isVerified }),
+      },
+    });
+
+    res.status(200).json(updatedProduct);
+  } catch (error) {
+    console.error("Error updating product:", error);
+    res.status(500).json({ message: error.message });
+  }
+};

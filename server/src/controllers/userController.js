@@ -127,3 +127,38 @@ export const deleteUsers = async (req, res) => {
     });
   }
 };
+
+export const updateCustomer = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const {
+      name,
+      producttype,
+      phoneNumber,
+      unitCost,
+      quantity,
+      totalAmount,
+      paidAmount,
+      remainingAmount,
+    } = req.body;
+
+    const updated = await prisma.customers.update({
+      where: { userId },
+      data: {
+        name,
+        producttype,
+        phoneNumber,
+        unitCost: unitCost !== undefined ? parseInt(unitCost) : undefined,
+        quantity: quantity !== undefined ? parseInt(quantity) : undefined,
+        totalAmount: totalAmount !== undefined ? parseFloat(totalAmount) : undefined,
+        paidAmount: paidAmount !== undefined ? parseFloat(paidAmount) : undefined,
+        remainingAmount: remainingAmount !== undefined ? parseFloat(remainingAmount) : undefined,
+      },
+    });
+
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
