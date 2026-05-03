@@ -3,7 +3,7 @@
 import { useAppDispatch, useAppSelector } from "@/app/redux";
 import { setIsDarkMode, setIsSidebarCollapsed } from "@/state";
 import { Bell, Menu, Moon, Settings, Sun, Search } from "lucide-react";
-import logo from "../../../../public/logo.png"
+import logo from "../../../../public/logo.jpg"
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation"
@@ -61,11 +61,7 @@ const Navbar = () => {
 
       {/* RIGHT SIDE */}
       <div className="flex items-center gap-3">
-        {/* Notifications */}
-        <button className="relative p-3 bg-gray-50 rounded-xl hover:bg-blue-50 transition-all duration-200 group">
-          <Bell className="w-5 h-5 text-gray-600 group-hover:text-blue-600 transition-colors" />
-          <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
-        </button>
+
 
         {/* Dark Mode Toggle */}
         <button 
@@ -108,7 +104,7 @@ const Navbar = () => {
           </div>
           <div className="flex flex-col">
             <span className="font-bold text-gray-800 text-sm group-hover:text-blue-600 transition-colors">
-              Ahmad Foods
+              Sunny Mobiles
             </span>
             <span className="text-xs text-gray-500">Administrator</span>
           </div>

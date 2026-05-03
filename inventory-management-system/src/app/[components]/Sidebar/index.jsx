@@ -3,7 +3,7 @@
 import { useAppDispatch, useAppSelector } from "@/app/redux";
 import { useRouter } from "next/navigation";
 import { setIsSidebarCollapsed } from "@/state";
-import logo from "../../../../public/logo.png"
+import logo from "../../../../public/logo.jpg"
 import {
   Archive,
   CircleDollarSign,
@@ -100,7 +100,7 @@ const Sidebar = () => {
           </div>
           <div className={`${isSidebarCollapsed ? "hidden" : "block"}`}>
             <h1 className="font-bold text-xl bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              Ahmad Foods
+              Sunny Mobiles
             </h1>
             <p className="text-xs text-gray-500 font-medium">Management System</p>
           </div>
@@ -161,11 +161,7 @@ const Sidebar = () => {
       </div>
 
       
-        <div className="border-t border-gray-100 py-4">
-          <p className="text-center text-xs text-gray-500">
-            &copy; 2024 Best Tech Solutions
-          </p>
-        </div>
+       
       </div>
   );
 };

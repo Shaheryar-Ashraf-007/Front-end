@@ -1,13 +1,11 @@
-// src/state/api.jsx
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000",
-    credentials: "include", // important for cookies
+    credentials: "include",
     prepareHeaders: (headers) => {
-      // Optional: attach Authorization header if token exists in localStorage
       if (typeof window !== "undefined") {
         const token = localStorage.getItem("token");
         if (token) headers.set("Authorization", `Bearer ${token}`);
@@ -15,6 +13,7 @@ export const api = createApi({
       return headers;
     },
   }),
+
   tagTypes: [
     "Auth",
     "DashboardMetrics",
@@ -23,6 +22,7 @@ export const api = createApi({
     "Salaries",
     "Expenses",
   ],
+
   endpoints: (build) => ({
     /* ================= AUTH ================= */
     login: build.mutation({
@@ -42,66 +42,150 @@ export const api = createApi({
 
     /* ================= PRODUCTS ================= */
     getProducts: build.query({
-      query: (search) => ({ url: "/products", params: search ? { search } : {} }),
+      query: (search) => ({
+        url: "/products",
+        params: search ? { search } : {},
+      }),
       providesTags: ["Products"],
     }),
+
     createProducts: build.mutation({
-      query: (formData) => ({ url: "/products", method: "POST", body: formData }),
+      query: (formData) => ({
+        url: "/products",
+        method: "POST",
+        body: formData,
+      }),
       invalidatesTags: ["Products"],
     }),
+
+    updateProduct: build.mutation({
+      query: ({ productId, ...data }) => ({
+        url: `/products/update/${productId}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["Products"],
+    }),
+
     deleteProduct: build.mutation({
-      query: (productId) => ({ url: `/products/${productId}`, method: "DELETE" }),
+      query: (productId) => ({
+        url: `/products/${productId}`,
+        method: "DELETE",
+      }),
       invalidatesTags: ["Products"],
     }),
 
     verifyProduct: build.mutation({
-  query: ({ productId, isVerified }) => ({
-    url: "/products/verify",
-    method: "PUT",
-    body: { productId, isVerified },
-  }),
-  invalidatesTags: ["Products"],
-}),
+      query: ({ productId, isVerified }) => ({
+        url: "/products/verify",
+        method: "PUT",
+        body: { productId, isVerified },
+      }),
+      invalidatesTags: ["Products"],
+    }),
 
     /* ================= USERS ================= */
     getUsers: build.query({
-      query: (search) => ({ url: "/users", params: search ? { search } : {} }),
+      query: (search) => ({
+        url: "/users",
+        params: search ? { search } : {},
+      }),
       providesTags: ["Users"],
     }),
+
     createUsers: build.mutation({
-      query: (newUser) => ({ url: "/users", method: "POST", body: newUser }),
+      query: (newUser) => ({
+        url: "/users",
+        method: "POST",
+        body: newUser,
+      }),
       invalidatesTags: ["Users"],
     }),
+
+    updateUsers: build.mutation({
+      query: ({ userId, ...data }) => ({
+        url: `/users/${userId}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["Users"],
+    }),
+
     deleteUsers: build.mutation({
-      query: (userId) => ({ url: `/users/${userId}`, method: "DELETE" }),
+      query: (userId) => ({
+        url: `/users/${userId}`,
+        method: "DELETE",
+      }),
       invalidatesTags: ["Users"],
     }),
 
     /* ================= SALARIES ================= */
     getSalaries: build.query({
-      query: (search) => ({ url: "/salaries", params: search ? { search } : {} }),
+      query: (search) => ({
+        url: "/salaries",
+        params: search ? { search } : {},
+      }),
       providesTags: ["Salaries"],
     }),
+
     createSalaries: build.mutation({
-      query: (newSalary) => ({ url: "/salaries", method: "POST", body: newSalary }),
+      query: (newSalary) => ({
+        url: "/salaries",
+        method: "POST",
+        body: newSalary,
+      }),
       invalidatesTags: ["Salaries"],
     }),
+
+    updateSalaries: build.mutation({
+      query: ({ userId, ...data }) => ({
+        url: `/salaries/${userId}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["Salaries"],
+    }),
+
     deleteSalaries: build.mutation({
-      query: (userId) => ({ url: `/salaries/${userId}`, method: "DELETE" }),
+      query: (userId) => ({
+        url: `/salaries/${userId}`,
+        method: "DELETE",
+      }),
       invalidatesTags: ["Salaries"],
     }),
 
     /* ================= EXPENSES ================= */
     getExpensesByCategory: build.query({
-      query: (search) => ({ url: "/expenses", params: search ? { search } : {} }),
+      query: (search) => ({
+        url: "/expenses",
+        params: search ? { search } : {},
+      }),
       providesTags: ["Expenses"],
     }),
+
     createExpense: build.mutation({
-      query: (newExpense) => ({ url: "/expenses", method: "POST", body: newExpense }),
+      query: (newExpense) => ({
+        url: "/expenses",
+        method: "POST",
+        body: newExpense,
+      }),
       invalidatesTags: ["Expenses"],
     }),
+
+    updateExpense: build.mutation({
+      query: ({ expenseId, ...data }) => ({
+        url: `/expenses/${expenseId}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["Expenses"],
+    }),
+
     deleteExpense: build.mutation({
-      query: (expenseId) => ({ url: `/expenses/${expenseId}`, method: "DELETE" }),
+      query: (expenseId) => ({
+        url: `/expenses/${expenseId}`,
+        method: "DELETE",
+      }),
       invalidatesTags: ["Expenses"],
     }),
   }),
@@ -110,18 +194,27 @@ export const api = createApi({
 /* ================= EXPORT HOOKS ================= */
 export const {
   useLoginMutation,
+
   useGetDashboardMetricsQuery,
+
   useGetProductsQuery,
-  useVerifyProductMutation,
   useCreateProductsMutation,
+  useUpdateProductMutation,
   useDeleteProductMutation,
+  useVerifyProductMutation,
+
   useGetUsersQuery,
   useCreateUsersMutation,
+  useUpdateUsersMutation,
   useDeleteUsersMutation,
+
   useGetSalariesQuery,
   useCreateSalariesMutation,
+  useUpdateSalariesMutation,
   useDeleteSalariesMutation,
+
   useGetExpensesByCategoryQuery,
   useCreateExpenseMutation,
+  useUpdateExpenseMutation,
   useDeleteExpenseMutation,
 } = api;

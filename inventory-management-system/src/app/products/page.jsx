@@ -1,12 +1,12 @@
 "use client";
 
-import { useGetProductsQuery, useCreateProductsMutation, useDeleteProductMutation } from "@/state/api";
+import { useGetProductsQuery, useCreateProductsMutation, useDeleteProductMutation, useUpdateProductMutation } from "@/state/api";
 import { PlusCircleIcon, SearchIcon, TrashIcon, Download, Package, AlertCircle } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "@/app/[components]/Header";
 import Ratings from "@/app/[components]/Ratings";
 import CreateProductModal from "./CreateProductModal";
-import * as XLSX from 'xlsx';
+import { exportToExcel } from "../utiils/exporttoExcel";
 
 const Products = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -14,52 +14,57 @@ const Products = () => {
   const [isCreatingProduct, setIsCreatingProduct] = useState(false);
   const [deletingProductId, setDeletingProductId] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const { data: products, isLoading, isError, refetch } = useGetProductsQuery(searchTerm);
   const [createProduct, { isError: createProductError }] = useCreateProductsMutation();
   const [deleteProduct] = useDeleteProductMutation();
+  const [updateProduct] = useUpdateProductMutation();
 
   const handleCreateProduct = async (productData) => {
     setIsCreatingProduct(true);
-    console.log('=== Starting product creation ===');
-    console.log('Product data received:', productData);
-    console.log('Product data type:', typeof productData);
-    console.log('Product data keys:', Object.keys(productData || {}));
-    
+    console.log("=== Starting product save ===");
+    console.log("Data:", productData);
+
     try {
-      console.log('Calling createProduct mutation...');
-      const result = await createProduct(productData).unwrap();
-      console.log('✅ Product created successfully:', result);
+      let result;
+
+      if (isEditMode && selectedProduct) {
+        console.log("Updating product...");
+        result = await updateProduct({
+          productId: selectedProduct.productId,
+          ...productData,
+        }).unwrap();
+        console.log("✅ Product updated:", result);
+      } else {
+        console.log("Creating product...");
+        result = await createProduct(productData).unwrap();
+        console.log("✅ Product created:", result);
+      }
+
       setIsModalOpen(false);
+      setSelectedProduct(null);
+      setIsEditMode(false);
       setErrorMessage("");
-      refetch(); 
+      refetch();
     } catch (error) {
-      console.error('❌ Failed to create product');
-      console.error('Error object:', error);
-      console.error('Error type:', typeof error);
-      console.error('Error keys:', Object.keys(error || {}));
-      console.error('Error.status:', error?.status);
-      console.error('Error.data:', error?.data);
-      console.error('Error.message:', error?.message);
-      console.error('Error.error:', error?.error);
-      
-      // Try to extract a meaningful error message
-      let errorMsg = "Failed to create product. Please try again.";
+      console.error("❌ Save failed:", error);
+
+      let errorMsg = "Something went wrong";
       if (error?.data?.message) {
         errorMsg = error.data.message;
       } else if (error?.message) {
         errorMsg = error.message;
-      } else if (error?.error) {
-        errorMsg = error.error;
       } else if (error?.status) {
         errorMsg = `API Error: ${error.status}`;
       }
-      
+
       setErrorMessage(errorMsg);
-      alert(errorMsg); // Temporary alert to show error immediately
+      alert(errorMsg);
     } finally {
       setIsCreatingProduct(false);
-      console.log('=== Product creation completed ===');
+      console.log("=== Save completed ===");
     }
   };
 
@@ -68,14 +73,14 @@ const Products = () => {
       setErrorMessage("Invalid product ID");
       return;
     }
-  
+
     try {
       setDeletingProductId(productId);
       console.log('Attempting to delete product with ID:', productId);
       await deleteProduct(productId).unwrap();
-      console.log("delete successfully")
+      console.log("delete successfully");
       refetch();
-      setErrorMessage(""); 
+      setErrorMessage("");
     } catch (error) {
       console.error('Delete error details:', error);
       setErrorMessage(error?.data?.message || 'Failed to delete product');
@@ -84,12 +89,23 @@ const Products = () => {
     }
   };
 
-  // Excel export function
-  const exportToExcel = () => {
-    const ws = XLSX.utils.json_to_sheet(products);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Products");
-    XLSX.writeFile(wb, "Products.xlsx");
+  // ✅ FIXED: Removed duplicate/broken exportToExcel definition — now uses the imported utility
+  const handleExportProducts = () => {
+    if (!products) return;
+
+    const formatted = products.map((p) => ({
+      Name: p.name,
+      Price: p.price,
+      Stock: p.stockQuantity,
+      Category: p.category,
+      Model: p.model,
+      Color: p.color,
+      Verified: p.isVerified ? "Yes" : "No",
+      Description: p.description ? p.description.substring(0, 30000) : "",
+      ImageURL: p.imageUrl ? p.imageUrl.substring(0, 1000) : "",
+    }));
+
+    exportToExcel(formatted, "Products");
   };
 
   if (isLoading) {
@@ -118,6 +134,7 @@ const Products = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-slate-50">
       <div className="mx-auto pb-8 w-full max-w-7xl px-4 sm:px-6 lg:px-8 pt-6">
+
         {/* Error Message */}
         {errorMessage && (
           <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg shadow-sm animate-pulse">
@@ -141,12 +158,12 @@ const Products = () => {
                 onClick={() => setIsModalOpen(true)}
                 disabled={isCreatingProduct}
               >
-                <PlusCircleIcon className="w-5 h-5 mr-2" /> 
+                <PlusCircleIcon className="w-5 h-5 mr-2" />
                 {isCreatingProduct ? 'Creating...' : 'Create Product'}
               </button>
               <button
                 className="flex items-center bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-2.5 px-5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                onClick={exportToExcel}
+                onClick={handleExportProducts} // ✅ FIXED: was calling exportToExcel directly
               >
                 <Download className="w-5 h-5 mr-2" />
                 Export to Excel
@@ -193,14 +210,12 @@ const Products = () => {
               >
                 <div className="p-6">
 
-
                   {/* Product Header */}
                   <div className="flex items-start justify-between mb-4">
-                        <div className="flex-1">
+                    <div className="flex-1">
                       <h3 className="text-lg font-bold text-gray-900 mb-1 line-clamp-2">
                         {product.name}
                       </h3>
-                     
                       <div className="flex items-center gap-2 text-sm text-gray-500">
                         {product.model && (
                           <span className="px-2 py-1 bg-purple-50 text-purple-700 rounded-lg font-medium">
@@ -212,18 +227,17 @@ const Products = () => {
                             {product.color}
                           </span>
                         )}
-
                         <div className="ml-28">
-                    {product.isVerified ? (
-                      <span className="px-2 py-2 text-xs font-semibold text-green-800 bg-green-100 rounded-full">
-                        Verified by PTA
-                      </span>
-                    ) : (
-                      <span className="px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">
-                        Non-Verified
-                      </span>
-                    )}
-                  </div>
+                          {product.isVerified ? (
+                            <span className="px-2 py-2 text-xs font-semibold text-green-800 bg-green-100 rounded-full">
+                              Verified by PTA
+                            </span>
+                          ) : (
+                            <span className="px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">
+                              Non-Verified
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -246,10 +260,10 @@ const Products = () => {
                     <div className="text-right">
                       <p className="text-sm text-gray-500 mb-1">Stock</p>
                       <p className={`text-lg font-semibold ${
-                        product.stockQuantity > 10 
-                          ? 'text-green-600' 
-                          : product.stockQuantity > 0 
-                          ? 'text-orange-600' 
+                        product.stockQuantity > 10
+                          ? 'text-green-600'
+                          : product.stockQuantity > 0
+                          ? 'text-orange-600'
                           : 'text-red-600'
                       }`}>
                         {product.stockQuantity} units
@@ -269,6 +283,18 @@ const Products = () => {
                     </div>
                   )}
 
+                  {/* Edit Button */}
+                  <button
+                    onClick={() => {
+                      setSelectedProduct(product);
+                      setIsEditMode(true);
+                      setIsModalOpen(true);
+                    }}
+                    className="w-full mb-2 flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-2.5 px-4 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg"
+                  >
+                    Edit Product
+                  </button>
+
                   {/* Delete Button */}
                   <button
                     onClick={() => handleDeleteProduct(product.productId)}
@@ -282,6 +308,7 @@ const Products = () => {
                     <TrashIcon className="w-4 h-4 mr-2" />
                     {deletingProductId === product.productId ? 'Deleting...' : 'Delete Product'}
                   </button>
+
                 </div>
               </div>
             ))
@@ -292,13 +319,19 @@ const Products = () => {
       {/* MODAL */}
       <CreateProductModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedProduct(null);
+          setIsEditMode(false);
+        }}
         onCreate={handleCreateProduct}
         isCreating={isCreatingProduct}
         error={createProductError}
+        initialData={selectedProduct}
+        isEditMode={isEditMode}
       />
     </div>
-  );
-};
+  ); // ✅ FIXED: closing parenthesis for return()
+}; // ✅ FIXED: closing brace for component
 
 export default Products;

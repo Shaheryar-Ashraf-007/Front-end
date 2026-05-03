@@ -2,14 +2,13 @@
 
 import React, { useState } from "react";
 import { Settings, User, Mail, Globe, Moon, Sun, Save, Shield, Bell } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const mockSettings = [
-  { label: "Username", value: "Ahmad Foods", type: "text", icon: User, category: "Account" },
-  { label: "Email", value: "purifasecurelife@gmail.com", type: "text", icon: Mail, category: "Account" },
+  { label: "Username", value: "Sunny mobiles", type: "text", icon: User, category: "Account" },
+  { label: "Email", value: "usman@example.com", type: "text", icon: Mail, category: "Account" },
   { label: "Dark Mode", value: false, type: "toggle", icon: Moon, category: "Appearance" },
   { label: "Language", value: "English", type: "text", icon: Globe, category: "Preferences" },
-  { label: "Notifications", value: true, type: "toggle", icon: Bell, category: "Preferences" },
-  { label: "Two-Factor Auth", value: false, type: "toggle", icon: Shield, category: "Security" },
 ];
 
 const SettingsPage = () => {
@@ -17,10 +16,17 @@ const SettingsPage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
+  const router = useRouter();
+
+  const token = localStorage.getItem("token");
+  if (!token) {
+    router.push("/login");
+  }
   const handleToggleChange = (index) => {
     const settingsCopy = [...userSettings];
     settingsCopy[index].value = !settingsCopy[index].value;
     setUserSettings(settingsCopy);
+
 
     // If Dark Mode toggle is changed
     if (settingsCopy[index].label === "Dark Mode") {

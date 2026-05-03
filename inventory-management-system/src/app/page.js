@@ -1,7 +1,16 @@
-import Dashboard from "@/app/dashboard/page.jsx"
+import LoginPage from "./login/page";
+
 export default function Home() {
+
+  
+ 
   return (
-    <Dashboard/>
+
+    <div>
+      <LoginPage/>
+    </div>
+
+    
     
   );
 }
