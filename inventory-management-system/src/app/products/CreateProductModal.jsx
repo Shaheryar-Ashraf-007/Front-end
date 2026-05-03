@@ -3,8 +3,15 @@ import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import {
-  Box, Typography, Fade, IconButton, Divider,
-  FormControl, InputLabel, Select, MenuItem
+  Box,
+  Typography,
+  Fade,
+  IconButton,
+  Divider,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -14,40 +21,93 @@ import { Launch } from "@mui/icons-material";
 
 const IPHONE_MODELS = [
   // iPhone 16 Series
-  "iPhone 16", "iPhone 16 Plus", "iPhone 16 Pro", "iPhone 16 Pro Max",
+  "iPhone 16",
+  "iPhone 16 Plus",
+  "iPhone 16 Pro",
+  "iPhone 16 Pro Max",
   // iPhone 15 Series
-  "iPhone 15", "iPhone 15 Plus", "iPhone 15 Pro", "iPhone 15 Pro Max",
+  "iPhone 15",
+  "iPhone 15 Plus",
+  "iPhone 15 Pro",
+  "iPhone 15 Pro Max",
   // iPhone 14 Series
-  "iPhone 14", "iPhone 14 Plus", "iPhone 14 Pro", "iPhone 14 Pro Max",
+  "iPhone 14",
+  "iPhone 14 Plus",
+  "iPhone 14 Pro",
+  "iPhone 14 Pro Max",
   // iPhone 13 Series
-  "iPhone 13", "iPhone 13 Mini", "iPhone 13 Pro", "iPhone 13 Pro Max",
+  "iPhone 13",
+  "iPhone 13 Mini",
+  "iPhone 13 Pro",
+  "iPhone 13 Pro Max",
   // iPhone 12 Series
-  "iPhone 12", "iPhone 12 Mini", "iPhone 12 Pro", "iPhone 12 Pro Max",
+  "iPhone 12",
+  "iPhone 12 Mini",
+  "iPhone 12 Pro",
+  "iPhone 12 Pro Max",
   // iPhone 11 Series
-  "iPhone 11", "iPhone 11 Pro", "iPhone 11 Pro Max",
+  "iPhone 11",
+  "iPhone 11 Pro",
+  "iPhone 11 Pro Max",
   // Older
-  "iPhone XS", "iPhone XS Max", "iPhone XR", "iPhone X",
-  "iPhone SE (3rd Gen)", "iPhone SE (2nd Gen)",
+  "iPhone XS",
+  "iPhone XS Max",
+  "iPhone XR",
+  "iPhone X",
+  "iPhone SE (3rd Gen)",
+  "iPhone SE (2nd Gen)",
   "Other",
 ];
 
 const IPHONE_COLORS = [
   // iPhone 16 Pro Colors
-  "Black Titanium", "White Titanium", "Natural Titanium", "Desert Titanium",
+  "Black Titanium",
+  "White Titanium",
+  "Natural Titanium",
+  "Desert Titanium",
   // iPhone 16 Colors
-  "Ultramarine", "Teal", "Pink", "White", "Black",
+  "Ultramarine",
+  "Teal",
+  "Pink",
+  "White",
+  "Black",
   // iPhone 15 Pro Colors
-  "Blue Titanium", "Natural Titanium (15)", "White Titanium (15)", "Black Titanium (15)",
+  "Blue Titanium",
+  "Natural Titanium (15)",
+  "White Titanium (15)",
+  "Black Titanium (15)",
   // iPhone 15 Colors
-  "Black (15)", "Blue (15)", "Green (15)", "Yellow (15)", "Pink (15)",
+  "Black (15)",
+  "Blue (15)",
+  "Green (15)",
+  "Yellow (15)",
+  "Pink (15)",
   // iPhone 14 Colors
-  "Midnight", "Starlight", "Blue (14)", "Purple (14)", "Red (14)", "Yellow (14)",
+  "Midnight",
+  "Starlight",
+  "Blue (14)",
+  "Purple (14)",
+  "Red (14)",
+  "Yellow (14)",
   // iPhone 13 Colors
-  "Midnight (13)", "Starlight (13)", "Blue (13)", "Pink (13)", "Green (13)", "Red (13)",
+  "Midnight (13)",
+  "Starlight (13)",
+  "Blue (13)",
+  "Pink (13)",
+  "Green (13)",
+  "Red (13)",
   // iPhone 12 Colors
-  "Black (12)", "White (12)", "Red (12)", "Green (12)", "Blue (12)", "Purple (12)",
+  "Black (12)",
+  "White (12)",
+  "Red (12)",
+  "Green (12)",
+  "Blue (12)",
+  "Purple (12)",
   // Classic
-  "Space Gray", "Silver", "Gold", "Rose Gold",
+  "Space Gray",
+  "Silver",
+  "Gold",
+  "Rose Gold",
   "Other",
 ];
 
@@ -164,9 +224,17 @@ const CreateProductModal = ({ isOpen, onClose, onCreate }) => {
     });
 
     // Reset
-    setName(""); setStockQuantity(""); setPrice(""); setModel("");
-    setColor(""); setDescription(""); setRating(""); setCategory("");
-    setImageFile(null); setImagePreview(null); setIsVerified(false);
+    setName("");
+    setStockQuantity("");
+    setPrice("");
+    setModel("");
+    setColor("");
+    setDescription("");
+    setRating("");
+    setCategory("");
+    setImageFile(null);
+    setImagePreview(null);
+    setIsVerified(false);
     onClose();
   };
 
@@ -203,25 +271,52 @@ const CreateProductModal = ({ isOpen, onClose, onCreate }) => {
             <IconButton
               onClick={onClose}
               sx={{
-                position: "absolute", right: 8, top: 8, color: "white",
+                position: "absolute",
+                right: 8,
+                top: 8,
+                color: "white",
                 "&:hover": { bgcolor: "rgba(255,255,255,0.2)" },
               }}
             >
               <CloseIcon />
             </IconButton>
-            <Typography variant="h5" sx={{ color: "white", fontWeight: 600, textAlign: "center", letterSpacing: "-0.5px" }}>
+            <Typography
+              variant="h5"
+              sx={{
+                color: "white",
+                fontWeight: 600,
+                textAlign: "center",
+                letterSpacing: "-0.5px",
+              }}
+            >
               Create New Product
             </Typography>
-            <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.9)", textAlign: "center", mt: 0.5 }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: "rgba(255,255,255,0.9)",
+                textAlign: "center",
+                mt: 0.5,
+              }}
+            >
               Add a new item to your inventory
             </Typography>
           </Box>
 
           {/* ── Form ── */}
           <Box sx={{ p: 4 }}>
-
             {/* Section: Verification */}
-            <Typography variant="subtitle2" sx={{ color: "text.secondary", fontWeight: 600, mb: 2, textTransform: "uppercase", fontSize: "0.75rem", letterSpacing: "0.5px" }}>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                color: "text.secondary",
+                fontWeight: 600,
+                mb: 2,
+                textTransform: "uppercase",
+                fontSize: "0.75rem",
+                letterSpacing: "0.5px",
+              }}
+            >
               Verification
             </Typography>
 
@@ -237,10 +332,24 @@ const CreateProductModal = ({ isOpen, onClose, onCreate }) => {
               </Select>
             </FormControl>
 
-            <Box sx={{ mt: 1, mb: 3, display: "flex", flexDirection: "column", gap: 1.5 }}>
+            <Box
+              sx={{
+                mt: 1,
+                mb: 3,
+                display: "flex",
+                flexDirection: "column",
+                gap: 1.5,
+              }}
+            >
               {[
-                { label: "Check IMEI on PTA (DIRBS)", url: "https://dirbs.pta.gov.pk/" },
-                { label: "Check IMEI on Punjab Police", url: "https://punjabpolice.gov.pk/e-Gadget" },
+                {
+                  label: "Check IMEI on PTA (DIRBS)",
+                  url: "https://dirbs.pta.gov.pk/",
+                },
+                {
+                  label: "Check IMEI on Punjab Police",
+                  url: "https://punjabpolice.gov.pk/e-Gadget",
+                },
               ].map(({ label, url }) => (
                 <Button
                   key={label}
@@ -249,15 +358,25 @@ const CreateProductModal = ({ isOpen, onClose, onCreate }) => {
                   startIcon={<Launch />}
                   onClick={() => window.open(url, "_blank")}
                   sx={{
-                    py: 1.3, borderRadius: 2, textTransform: "none", fontWeight: 600,
-                    borderColor: "#0f766e", color: "#0f766e",
-                    "&:hover": { borderColor: "#115e59", bgcolor: "rgba(15,118,110,0.05)" },
+                    py: 1.3,
+                    borderRadius: 2,
+                    textTransform: "none",
+                    fontWeight: 600,
+                    borderColor: "#0f766e",
+                    color: "#0f766e",
+                    "&:hover": {
+                      borderColor: "#115e59",
+                      bgcolor: "rgba(15,118,110,0.05)",
+                    },
                   }}
                 >
                   {label}
                 </Button>
               ))}
-              <Typography variant="caption" sx={{ color: "text.secondary", textAlign: "center" }}>
+              <Typography
+                variant="caption"
+                sx={{ color: "text.secondary", textAlign: "center" }}
+              >
                 Verify IMEI on external sites, then set status above
               </Typography>
             </Box>
@@ -265,7 +384,17 @@ const CreateProductModal = ({ isOpen, onClose, onCreate }) => {
             <Divider sx={{ my: 2 }} />
 
             {/* Section: Product Image */}
-            <Typography variant="subtitle2" sx={{ color: "text.secondary", fontWeight: 600, mb: 2, textTransform: "uppercase", fontSize: "0.75rem", letterSpacing: "0.5px" }}>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                color: "text.secondary",
+                fontWeight: 600,
+                mb: 2,
+                textTransform: "uppercase",
+                fontSize: "0.75rem",
+                letterSpacing: "0.5px",
+              }}
+            >
               Product Image
             </Typography>
 
@@ -275,27 +404,66 @@ const CreateProductModal = ({ isOpen, onClose, onCreate }) => {
               fullWidth
               startIcon={<CloudUploadIcon />}
               sx={{
-                py: 1.5, borderRadius: 2, borderStyle: "dashed", borderWidth: 2,
+                py: 1.5,
+                borderRadius: 2,
+                borderStyle: "dashed",
+                borderWidth: 2,
                 borderColor: imageFile ? "#667eea" : "divider",
                 color: imageFile ? "#667eea" : "text.secondary",
                 bgcolor: imageFile ? "rgba(102,126,234,0.05)" : "transparent",
-                "&:hover": { borderColor: "#667eea", bgcolor: "rgba(102,126,234,0.05)" },
+                "&:hover": {
+                  borderColor: "#667eea",
+                  bgcolor: "rgba(102,126,234,0.05)",
+                },
               }}
             >
               {imageFile ? "Change Image" : "Upload Image"}
-              <input type="file" hidden accept="image/*" onChange={handleImageChange} />
+              <input
+                type="file"
+                hidden
+                accept="image/*"
+                onChange={handleImageChange}
+              />
             </Button>
 
             {imagePreview && (
-              <Box sx={{ mt: 2, p: 2, border: "1px solid", borderColor: "divider", borderRadius: 2, bgcolor: "grey.50" }}>
-                <img src={imagePreview} alt="Preview" style={{ width: "100%", maxHeight: 200, objectFit: "contain", borderRadius: 8 }} />
+              <Box
+                sx={{
+                  mt: 2,
+                  p: 2,
+                  border: "1px solid",
+                  borderColor: "divider",
+                  borderRadius: 2,
+                  bgcolor: "grey.50",
+                }}
+              >
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  style={{
+                    width: "100%",
+                    maxHeight: 200,
+                    objectFit: "contain",
+                    borderRadius: 8,
+                  }}
+                />
               </Box>
             )}
 
             <Divider sx={{ my: 3 }} />
 
             {/* Section: Product Details */}
-            <Typography variant="subtitle2" sx={{ color: "text.secondary", fontWeight: 600, mb: 2, textTransform: "uppercase", fontSize: "0.75rem", letterSpacing: "0.5px" }}>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                color: "text.secondary",
+                fontWeight: 600,
+                mb: 2,
+                textTransform: "uppercase",
+                fontSize: "0.75rem",
+                letterSpacing: "0.5px",
+              }}
+            >
               Product Details
             </Typography>
 
@@ -303,19 +471,32 @@ const CreateProductModal = ({ isOpen, onClose, onCreate }) => {
               label="Product Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              required fullWidth margin="normal" sx={dropdownSx}
+              required
+              fullWidth
+              margin="normal"
+              sx={dropdownSx}
             />
 
             <Box sx={{ display: "flex", gap: 2 }}>
               <TextField
-                label="Stock Quantity" type="number"
-                value={stockQuantity} onChange={(e) => setStockQuantity(e.target.value)}
-                required fullWidth margin="normal" sx={dropdownSx}
+                label="Stock Quantity"
+                type="number"
+                value={stockQuantity}
+                onChange={(e) => setStockQuantity(e.target.value)}
+                required
+                fullWidth
+                margin="normal"
+                sx={dropdownSx}
               />
               <TextField
-                label="Unit Cost" type="number"
-                value={price} onChange={(e) => setPrice(e.target.value)}
-                required fullWidth margin="normal" sx={dropdownSx}
+                label="Unit Cost"
+                type="number"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                required
+                fullWidth
+                margin="normal"
+                sx={dropdownSx}
               />
             </Box>
 
@@ -328,9 +509,13 @@ const CreateProductModal = ({ isOpen, onClose, onCreate }) => {
                 onChange={(e) => setModel(e.target.value)}
                 MenuProps={{ PaperProps: { style: { maxHeight: 260 } } }}
               >
-                <MenuItem value=""><em>— Select Model —</em></MenuItem>
+                <MenuItem value="">
+                  <em>— Select Model —</em>
+                </MenuItem>
                 {IPHONE_MODELS.map((m) => (
-                  <MenuItem key={m} value={m}>{m}</MenuItem>
+                  <MenuItem key={m} value={m}>
+                    {m}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -345,26 +530,38 @@ const CreateProductModal = ({ isOpen, onClose, onCreate }) => {
                 MenuProps={{ PaperProps: { style: { maxHeight: 260 } } }}
                 renderValue={(val) => (
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <Box sx={{
-                      width: 14, height: 14, borderRadius: "50%",
-                      bgcolor: colorHex(val),
-                      border: "1px solid rgba(0,0,0,0.15)",
-                      flexShrink: 0,
-                    }} />
+                    <Box
+                      sx={{
+                        width: 14,
+                        height: 14,
+                        borderRadius: "50%",
+                        bgcolor: colorHex(val),
+                        border: "1px solid rgba(0,0,0,0.15)",
+                        flexShrink: 0,
+                      }}
+                    />
                     {val}
                   </Box>
                 )}
               >
-                <MenuItem value=""><em>— Select Color —</em></MenuItem>
+                <MenuItem value="">
+                  <em>— Select Color —</em>
+                </MenuItem>
                 {IPHONE_COLORS.map((c) => (
                   <MenuItem key={c} value={c}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                      <Box sx={{
-                        width: 14, height: 14, borderRadius: "50%",
-                        bgcolor: colorHex(c),
-                        border: "1px solid rgba(0,0,0,0.15)",
-                        flexShrink: 0,
-                      }} />
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", gap: 1.5 }}
+                    >
+                      <Box
+                        sx={{
+                          width: 14,
+                          height: 14,
+                          borderRadius: "50%",
+                          bgcolor: colorHex(c),
+                          border: "1px solid rgba(0,0,0,0.15)",
+                          flexShrink: 0,
+                        }}
+                      />
                       {c}
                     </Box>
                   </MenuItem>
@@ -381,9 +578,13 @@ const CreateProductModal = ({ isOpen, onClose, onCreate }) => {
                 onChange={(e) => setCategory(e.target.value)}
                 MenuProps={{ PaperProps: { style: { maxHeight: 260 } } }}
               >
-                <MenuItem value=""><em>— Select Category —</em></MenuItem>
+                <MenuItem value="">
+                  <em>— Select Category —</em>
+                </MenuItem>
                 {CATEGORIES.map((cat) => (
-                  <MenuItem key={cat.value} value={cat.value}>{cat.label}</MenuItem>
+                  <MenuItem key={cat.value} value={cat.value}>
+                    {cat.label}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -391,20 +592,38 @@ const CreateProductModal = ({ isOpen, onClose, onCreate }) => {
             <Divider sx={{ my: 3 }} />
 
             {/* Section: Optional */}
-            <Typography variant="subtitle2" sx={{ color: "text.secondary", fontWeight: 600, mb: 2, textTransform: "uppercase", fontSize: "0.75rem", letterSpacing: "0.5px" }}>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                color: "text.secondary",
+                fontWeight: 600,
+                mb: 2,
+                textTransform: "uppercase",
+                fontSize: "0.75rem",
+                letterSpacing: "0.5px",
+              }}
+            >
               Optional Information
             </Typography>
 
             <TextField
-              label="Description (Optional)" value={description}
+              label="Description (Optional)"
+              value={description}
               onChange={(e) => setDescription(e.target.value)}
-              fullWidth margin="normal" multiline rows={3} sx={dropdownSx}
+              fullWidth
+              margin="normal"
+              multiline
+              rows={3}
+              sx={dropdownSx}
             />
 
             <TextField
-              label="Rating (Optional)" type="number" value={rating}
+              label="Rating (Optional)"
+              type="number"
+              value={rating}
               onChange={(e) => setRating(e.target.value)}
-              fullWidth margin="normal"
+              fullWidth
+              margin="normal"
               inputProps={{ min: 0, max: 5, step: 0.1 }}
               sx={dropdownSx}
             />
@@ -413,13 +632,20 @@ const CreateProductModal = ({ isOpen, onClose, onCreate }) => {
             <Box sx={{ display: "flex", gap: 2, mt: 4 }}>
               <Button
                 onClick={handleSubmit}
-                variant="contained" fullWidth
+                variant="contained"
+                fullWidth
                 sx={{
-                  py: 1.5, borderRadius: 2, textTransform: "none", fontSize: "1rem", fontWeight: 600,
-                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  py: 1.5,
+                  borderRadius: 2,
+                  textTransform: "none",
+                  fontSize: "1rem",
+                  fontWeight: 600,
+                  background:
+                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                   boxShadow: "0 4px 12px rgba(102,126,234,0.3)",
                   "&:hover": {
-                    background: "linear-gradient(135deg, #5568d3 0%, #653a8b 100%)",
+                    background:
+                      "linear-gradient(135deg, #5568d3 0%, #653a8b 100%)",
                     boxShadow: "0 6px 16px rgba(102,126,234,0.4)",
                   },
                 }}
@@ -428,11 +654,20 @@ const CreateProductModal = ({ isOpen, onClose, onCreate }) => {
               </Button>
               <Button
                 onClick={onClose}
-                variant="outlined" fullWidth
+                variant="outlined"
+                fullWidth
                 sx={{
-                  py: 1.5, borderRadius: 2, borderColor: "divider", color: "text.secondary",
-                  textTransform: "none", fontSize: "1rem", fontWeight: 600,
-                  "&:hover": { borderColor: "text.secondary", bgcolor: "grey.50" },
+                  py: 1.5,
+                  borderRadius: 2,
+                  borderColor: "divider",
+                  color: "text.secondary",
+                  textTransform: "none",
+                  fontSize: "1rem",
+                  fontWeight: 600,
+                  "&:hover": {
+                    borderColor: "text.secondary",
+                    bgcolor: "grey.50",
+                  },
                 }}
               >
                 Cancel
@@ -448,12 +683,26 @@ const CreateProductModal = ({ isOpen, onClose, onCreate }) => {
 // ── Color → hex helper (best-effort visual dot) ────────────────────────────────
 function colorHex(name = "") {
   const map = {
-    black: "#1c1c1e", white: "#f5f5f7", silver: "#c0c0c0", gold: "#f5d78e",
-    "rose gold": "#e8b4a0", midnight: "#1c2340", starlight: "#f2ead8",
-    blue: "#4a90d9", purple: "#9b59b6", red: "#e74c3c", green: "#27ae60",
-    yellow: "#f1c40f", pink: "#f48fb1", teal: "#1abc9c", ultramarine: "#3f51b5",
-    titanium: "#8e8e93", "space gray": "#4a4a4a", natural: "#c8bca8",
-    desert: "#c8a97e", other: "#bdbdbd",
+    black: "#1c1c1e",
+    white: "#f5f5f7",
+    silver: "#c0c0c0",
+    gold: "#f5d78e",
+    "rose gold": "#e8b4a0",
+    midnight: "#1c2340",
+    starlight: "#f2ead8",
+    blue: "#4a90d9",
+    purple: "#9b59b6",
+    red: "#e74c3c",
+    green: "#27ae60",
+    yellow: "#f1c40f",
+    pink: "#f48fb1",
+    teal: "#1abc9c",
+    ultramarine: "#3f51b5",
+    titanium: "#8e8e93",
+    "space gray": "#4a4a4a",
+    natural: "#c8bca8",
+    desert: "#c8a97e",
+    other: "#bdbdbd",
   };
   const key = name.toLowerCase().split(" ")[0];
   return map[key] || map[name.toLowerCase()] || "#bdbdbd";
